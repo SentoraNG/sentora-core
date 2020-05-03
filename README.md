@@ -1,21 +1,20 @@
-# Sentora
+# SentoraNG
 
-* Version: 1.0.3
-* [Website](http://sentora.org/)
-* [Forums](http://forums.sentora.org/) for comments, discussion and community support.
-* [Bug Tracker](https://github.com/sentora/sentora-core/issues) for any bugs or security related issues.
+* Version: 1.0.0
+* [Website](http://SentoraNG.org/)
+* [Bug Tracker](https://github.com/SentoraNG/sentora-core/issues) for any bugs or security related issues.
 
 ## Description
 
-[Sentora](http://sentora.org) is based on an original fork of ZPanelCP, Sentora is an open-source web hosting control panel written in PHP and is designed to work with with Linux, UNIX and the BSD's.
+[SentoraNG](http://SentoraNG.org) is based on an original fork of [sentora](http://sentora.org). This fork is created on 3th may 2020. SentoraNG is an open-source web hosting control panel written in PHP and is designed to work with with Linux, UNIX and the BSD's.
 
-Sentora is developed and maintained by the original ZPanel team members ([ballen](http://bobbyallen.me), tgates, kandrews, motters etc.)
+SentoraNG is developed and maintained by the 0pc0deFR.
 
-## Downloading Sentora
+## Downloading SentoraNG
 
-To use Sentora in a production environment we recommend you use our automated installers which also take care of the installation of not only Sentora but also Apache, PHP, MySQL, BIND, ProFTPd etc.
+To use SentoraNG in a production environment we recommend you use our automated installers which also take care of the installation of not only SentoraNG but also Apache, PHP, MySQL, BIND, ProFTPd etc.
 
-To download Sentora please use the links found on [our download page](http://sentora.org/download/).
+To download Sentora please use the links found on [our download page](http://SentoraNG.org/download/).
 
 ## License agreement
 
@@ -23,4 +22,4 @@ Sentora is licensed under the [GNU GENERAL PUBLIC LICENSE (GPL v3)](LICENSE.md) 
 
 ## Getting support
 
-We provide excellent free (and premium) [support](http://sentora.org/support/) and [documentation](http://docs.sentora.org/?node=23) at our website.
+We provide excellent free (and premium) [support](http://SentoraNG.org/support/) and [documentation](http://docs.SentoraNG.org/?node=23) at our website.
