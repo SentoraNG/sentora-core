@@ -219,7 +219,7 @@ class module_controller extends ctrl_module
         $line .= "</tr>";
         $line .= "</table>";
         $line .= "</form>";
-        $line .= "<form name=\"launchbindlog\" action=\"modules/dns_admin/code/getbindlog.php\" target=\"bindlogwindow\" method=\"post\" onsubmit=\"window.open('', 'bindlogwindow', 'scrollbars=yes,menubar=no,height=525,width=825,resizable=no,toolbar=no,location=no,status=no')\">";
+        $line .= "<form action=\"./?module=dns_admin#displayLogs\" method=\"post\">";
         $line .= "<table class=\"table table-striped\">";
         $line .= "<tr>";
         if (count(self::$logerror) > 0) {
@@ -253,12 +253,72 @@ class module_controller extends ctrl_module
         $line .= "</div>";
         $line .= "</div>";
 
-        //CHARTS
-        $line .= "<table class=\"none\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td>";
-        $line .= self::DisplayDNSUsagepChart();
-        $line .= "</td><td>";
-        $line .= self::DisplayRecordsUsagepChart();
-        $line .= "</td></tr></table>";
+        $formvars = $controller->GetAllControllerRequests('FORM');
+        if(isset($formvars['inBindLog'])){
+            $line .= "<div id=\"displayLogs\" style=\"display: block; margin-right:20px; background:#000000\"><font color=\"#009900\">";
+            $bindlog = str_replace('..', '__', $formvars['inBindLog']); // Temporary fix until I can think of a better solution, this will however stop reverse iteration of the filesystem though by causing an error if '..'  eg. '../../' is requested.
+            $logerror = array();
+            $logwarning = array();
+            $getlog = array();
+            if (file_exists($bindlog)) {
+                $handle = @fopen($bindlog, "r");
+                $getlog = array();
+                if ($handle) {
+                    while (!feof($handle)) {
+                        $buffer = fgets($handle, 4096);
+                        $getlog[] = $buffer;
+                        if (strstr($buffer, 'error:') || strstr($buffer, 'error ')) {
+                            $logerror[] = $buffer;
+                        }
+                        if (strstr($buffer, 'warning:') || strstr($buffer, 'warning ')) {
+                            $logwarning[] = $buffer;
+                        }
+                    }fclose($handle);
+                }
+            }
+            if (isset($formvars['inViewErrors'])) {
+                $line .= "<font color=\"#FFF\"><h2>BIND Errors:</h2></font>";
+                foreach ($logerror as $logline) {
+                    $logline = str_replace("error", "<font color=\"#CC0000\">error</font>", $logline);
+                    $line .= $logline . "<br>";
+                }
+            }
+
+            if (isset($formvars['inViewWarnings'])) {
+                $line .= "<font color=\"#FFF\"><h2>BIND Warnings:</h2></font>";
+                foreach ($logwarning as $logline) {
+                    $logline = str_replace("warning", "<font color=\"#FFFF99\">warning</font>", $logline);
+                    $line .= $logline . "<br>";
+                }
+            }
+
+            if (isset($formvars['inViewLogs'])) {
+                $line .= "<font color=\"#FFF\"><h2>BIND Full Logs:</h2></font>";
+                foreach ($getlog as $logline) {
+                    if (strstr($logline, "succeeded") || strstr($logline, "SIGHUP")) {
+                        $logline = "<font color=\"#00FF00\">" . $logline . "</font>";
+                    }
+                    if (strstr($logline, "error")) {
+                        $logline = "<font color=\"#CC0000\">" . $logline . "</font>";
+                    }
+                    if (strstr($logline, "Failed")) {
+                        $logline = "<font color=\"#AAAAAA\">" . $logline . "</font>";
+                    }
+                    if (strstr($logline, "warning")) {
+                        $logline = "<font color=\"#FFFF99\">" . $logline . "</font>";
+                    }
+                    $line .= $logline . "<br>";
+                }
+            }
+            $line .= "</font></div>";
+        }else{
+            //CHARTS
+            $line .= "<table class=\"none\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td>";
+            $line .= self::DisplayDNSUsagepChart();
+            $line .= "</td><td>";
+            $line .= self::DisplayRecordsUsagepChart();
+            $line .= "</td></tr></table>";
+        }
 
         return $line;
     }
