@@ -630,7 +630,7 @@ class module_controller extends ctrl_module
         $formvars = $controller->GetAllControllerRequests('FORM');
         if (self::getIsValidUser($formvars['inUser']) == true ){
             if (self::ExecuteResetPassword($formvars['inUser'], $formvars['inResetPW']))
-                return true;            
+                return true;
         }
         return false;
     }
