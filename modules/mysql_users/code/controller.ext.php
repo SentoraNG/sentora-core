@@ -586,7 +586,7 @@ class module_controller extends ctrl_module
         $formvars = $controller->GetAllControllerRequests('FORM');
         if( self::getIsValidDatabase( $formvars['inDatabase'] ) ){
             if (self::ExecuteAddDB($currentuser['userid'], $formvars['inUser'], $formvars['inDatabase']))
-                return true;            
+                return true;
         }
         return false;
     }
