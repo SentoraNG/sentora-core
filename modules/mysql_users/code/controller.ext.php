@@ -584,8 +584,10 @@ class module_controller extends ctrl_module
         runtime_csfr::Protect();
         $currentuser = ctrl_users::GetUserDetail();
         $formvars = $controller->GetAllControllerRequests('FORM');
-        if (self::ExecuteAddDB($currentuser['userid'], $formvars['inUser'], $formvars['inDatabase']))
-            return true;
+        if( self::getIsValidDatabase( $formvars['inDatabase'] ) ){
+            if (self::ExecuteAddDB($currentuser['userid'], $formvars['inUser'], $formvars['inDatabase']))
+                return true;            
+        }
         return false;
     }
 
@@ -597,9 +599,13 @@ class module_controller extends ctrl_module
         $formvars = $controller->GetAllControllerRequests('FORM');
         foreach (self::ListUserDatabases($formvars['inUser']) as $row) {
             if (isset($formvars['inRemove_' . $row['mmid'] . ''])) {
-                if (self::ExecuteRemoveDB($formvars['inUser'], $formvars['inRemove_' . $row['mmid'] . ''])) {
-                    return true;
-                } else {
+                if( self::getIsValidDatabaseId( $row['mmid'] ) ) {
+                    if (self::ExecuteRemoveDB($formvars['inUser'], $formvars['inRemove_' . $row['mmid'] . ''])) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }else{
                     return false;
                 }
             }
@@ -622,8 +628,10 @@ class module_controller extends ctrl_module
         global $controller;
         runtime_csfr::Protect();
         $formvars = $controller->GetAllControllerRequests('FORM');
-        if (self::ExecuteResetPassword($formvars['inUser'], $formvars['inResetPW']))
-            return true;
+        if (self::getIsValidUser($formvars['inUser']) == true ){
+            if (self::ExecuteResetPassword($formvars['inUser'], $formvars['inResetPW']))
+                return true;            
+        }
         return false;
     }
 
@@ -634,11 +642,40 @@ class module_controller extends ctrl_module
         return self::ListUsers($currentuser['userid']);
     }
 
+    static function getIsValidUser($userid){
+        foreach ( self::getUserList() as $user) {
+            if( $user['userid'] == $userid ){
+                return true;
+            }
+        }
+        return false;
+    }
+
     static function getDatabaseList()
     {
         global $controller;
         $currentuser = ctrl_users::GetUserDetail();
         return self::ListDatabases($currentuser['userid']);
+    }
+
+    static function getIsValidDatabase($database)
+    {
+        foreach ( self::getDatabaseList() as $key => $value ) {
+            if( in_array($database, $value) ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static function getIsValidDatabaseId($databaseid)
+    {
+        foreach ( self::getDatabaseList() as $database ) {
+            if( $database['mysqlid'] == $databaseid ){
+                return true;
+            }
+        }
+        return false;
     }
 
     static function getUserDatabaseList()
@@ -652,7 +689,7 @@ class module_controller extends ctrl_module
     {
         global $controller;
         $urlvars = $controller->GetAllControllerRequests('URL');
-        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Delete"))
+        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Delete") && isset($urlvars['other']) && (self::getIsValidUser($urlvars['other']) == true))
             return true;
         return false;
     }
@@ -661,7 +698,7 @@ class module_controller extends ctrl_module
     {
         global $controller;
         $urlvars = $controller->GetAllControllerRequests('URL');
-        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Edit"))
+        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Edit") && isset($urlvars['other']) && (self::getIsValidUser($urlvars['other']) == true))
             return true;
         return false;
     }
